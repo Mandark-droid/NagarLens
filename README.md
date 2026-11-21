@@ -2,22 +2,27 @@
 
 # NagarLens
 
-**Team 11 · Claude Impact Lab Mumbai · 21 Nov 2026**
-
 **Follow every rupee from a citizen's complaint to a fix that held.**
 
-> **₹13.43 Cr billed for Mumbai's 2025 monsoon road repairs; ₹3.22 Cr needs a second look.**
-> De-duplicated across 622 work orders (a job caught by two rules counts once). These are review leads, not findings of wrongdoing.
+Every monsoon, Mumbai pays to fix the same roads again. Citizens complain, repairs are logged, the potholes come back, and nobody can easily say where the money went, whether the fix lasted, or who is responsible.
 
-Built in one day for the challenge *"Follow the Rupee: where did Mumbai's road repair money go?"*. All data is synthetic; see [Data and fairness](#data-and-fairness).
+**NagarLens is a Claude-powered audit and budgeting tool for ward officers and citizens.** It links every complaint to its repair and its bill, flags the bills that need a second look, scores contractors and wards fairly, and plans where the next rupee should go.
 
----
+> **Of ₹13.43 Cr billed for Mumbai's 2025 monsoon road repairs, ₹3.22 Cr needs a second look.**
+> 493 jobs billed on roads still under warranty, 111 bills above the rate card, 45 possible duplicate bills. These are leads for review, not findings of wrongdoing.
 
-## Demo
+**[▶ Watch the 2-minute demo](https://github.com/Mandark-droid/NagarLens/releases/download/demo-video/nagarlens_demo.mp4)** · **[Open the live app](https://kshitijthakkar-nagarlens.hf.space)** · [Run it locally](#quick-start)
 
-- **Demo video (2 min, narrated):** [nagarlens_demo.mp4](https://github.com/Mandark-droid/NagarLens/releases/download/demo-video/nagarlens_demo.mp4) · [release page](https://github.com/Mandark-droid/NagarLens/releases/tag/demo-video)
-- **Live app:** <https://kshitijthakkar-nagarlens.hf.space> ([Hugging Face Space](https://huggingface.co/spaces/kshitijthakkar/nagarlens)). The hosted copy runs without a Claude API key, so its AI panels show cached answers or template text, and officer decisions reset when the Space restarts. Deployment notes: [deploy/README.md](deploy/README.md).
-- **Run it locally:** see [Quick start](#quick-start).
+| The brief asks us to | NagarLens |
+|---|---|
+| **Connect** complaints to the work that fixed them | Follows one case end to end: complaints → work order → road → bill → did it hold? Every link is an exact id match. |
+| **Audit** repairs | Three deterministic rules. Each lead shows its evidence side by side, a fair alternative explanation and a next action. |
+| **Hold to account** | Like-for-like scorecards for every contractor and ward, separating system problems from contractor problems. |
+| **Budget smarter** | "Recover, then reinvest": a budget-capped plan ranked by risk (hospitals, flood spots, bus routes), compared with two simpler strategies. |
+
+Claude reads the messy multilingual complaints and writes the plain-language verdicts, scorecards and citizen answers. Every number is computed in pandas; Claude never calculates or changes a figure.
+
+Team 11 · Claude Impact Lab Mumbai · 21 Nov 2026 · All data is synthetic and all contractors are fictional ([details](#data-and-fairness)). The hosted app runs without a Claude API key, so its AI panels show cached or template text, and reviewer decisions reset when it restarts ([deployment notes](deploy/README.md)).
 
 | | |
 |---|---|
@@ -28,12 +33,6 @@ Built in one day for the challenge *"Follow the Rupee: where did Mumbai's road r
 ---
 
 ## The problem
-
-Every monsoon, Mumbai pays to fix the same roads again. Citizens complain, repairs get logged and the potholes come back. Nobody can easily answer three questions:
-
-1. **Where did the money go?**
-2. **Did the fix last?**
-3. **Who is responsible?**
 
 Our pitch is **"Recover, then reinvest."** About ₹3 Cr went on repairs to roads still under warranty, duplicate bills, and charges above the rate card. NagarLens shows how to get that money back and where each ward should spend next.
 
@@ -62,12 +61,12 @@ A Next.js web app on a FastAPI backend, with a ward picker on every page. Seven 
 
 | Page | Route | What you see |
 |---|---|---|
-| **Where did the money go?** | `/` | The headline (₹13.43 Cr billed → ₹3.22 Cr to review), budget vs billed by ward, a budget → billed → outcome money flow, a ward map with flood hotspots, and rainfall vs spend |
-| **Follow one case** | `/case` | One work order end to end: complaints → assignment → repair → bill vs rate card → did it hold? → verdict, with a map, the SLA clock, the road's repair history and a Claude-written verdict |
+| **Where did the money go?** | `/` | Ward totals (budget against billed, spend on fixes that failed, repairs on time, rupees to review), a money flow from billed → work type → outcome, a map of rupees to review by ward, rainfall against spend, and the roads that took the most money |
+| **Follow one case** | `/case` | One work order end to end: complaints → assignment → repair → bill vs rate card → did it hold? → verdict, with the SLA clock, the complaints behind the job, every repair on the road this monsoon and a Claude-written verdict |
 | **Road history** | `/roads` | Every road segment in the ward with its repairs, bills and failures; per segment, a timeline of every repair, monthly billed (held vs failed), warranty status and the leads on it. Road history shows the road on Google Maps (context only; the dataset's segment coordinates are synthetic) |
 | **What doesn't add up?** | `/audit` | Review leads from three rules (paid during warranty, above the rate card, possible duplicate bill), each with its evidence, fair context and next step. Each lead has a recommended verdict, a fair hearing (auditor vs fairness advocate), a ready-to-send evidence-request or warranty-claim letter and a public repair receipt citizens can vote on, plus a reviewer decision saved to SQLite |
 | **Who is responsible?** | `/scorecards` | Contractor and ward report cards compared like for like (same SLA tier and flood exposure, same repair method), with Speed / Durability / Cost chips, rain context (on-time rate on heavy-rain and dry days against peers) and a plain-language summary |
-| **Where should the next rupee go?** | `/next-rupee` | Recover first, then a budget- and crew-capped plan: open complaints matched to road segments, risk-ranked with the reasons shown, adjustable weights, a map, and every deferred, warranty-routed or excluded item with its reason. A strategy comparison spends the same budget three ways (most complaints, highest severity, NagarLens risk plan) and shows the trade-offs, including where the risk plan loses |
+| **Where should the next rupee go?** | `/next-rupee` | Recover first, then a budget- and crew-capped plan: open complaints matched to road segments, risk-ranked with the reasons shown, adjustable weights, and every deferred, warranty-routed or excluded item with its reason. A strategy comparison spends the same budget three ways (most complaints, highest severity, NagarLens risk plan) and shows the trade-offs, including where the risk plan loses |
 | **Ask about my complaint** | `/ask` | "What happened to my complaint?" answered in the citizen's own language (English, Hindi, Marathi or Hinglish) from the linked records, including open, merged and forwarded complaints |
 
 ### The AI workflow
