@@ -8,6 +8,7 @@ import { useParams } from "next/navigation";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis } from "recharts";
 
 import { DataBadge, ErrorBox, Loading, PageTitle, Pill, Section } from "@/components/bits";
+import RoadGoogleMap from "@/components/road-google-map";
 import { api } from "@/lib/api";
 import { cleanName, inr, inrFull, pct, when } from "@/lib/format";
 
@@ -61,6 +62,9 @@ export default function RoadView() {
         <StatTile tone="review" Icon={ClipboardList} label="Needs review" value={tot.review_inr ? inr(tot.review_inr) : "–"}
           note={`${tot.review_jobs} jobs with an audit lead, counted once`} />
       </div>
+
+      {/* Where the road is, on Google Maps: context only, never joined to a record. */}
+      <RoadGoogleMap road={r} />
 
       {orders.length === 0 ? (
         <Section title="No repairs logged" hint="No work order names this segment between June and October 2025."><span /></Section>
