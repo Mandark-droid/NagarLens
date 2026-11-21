@@ -24,6 +24,21 @@ def test_road_list_covers_every_road_and_reconciles(client, t, findings):
     assert [r["billed_inr"] for r in rows] == sorted((r["billed_inr"] for r in rows), reverse=True)
 
 
+def test_road_list_totals_cover_the_whole_selection(client, t):
+    wo = t["work_orders"]
+    failed = wo.reopened_within_30d == "Y"
+    city = client.get("/api/roads", params={"limit": 5}).json()
+    assert len(city["rows"]) == 5                      # totals are not cut by the row limit
+    tot = city["totals"]
+    assert (tot["segments"], tot["jobs"], tot["billed_inr"], tot["reopened"]) == (
+        291, len(wo), int(wo.cost_inr.sum()), int(failed.sum()))
+    assert tot["reopen_rate"] == pytest.approx(failed.mean())
+    ward = client.get("/api/roads", params={"ward": "L"}).json()
+    in_l = wo[wo.ward_code == "L"]
+    assert ward["totals"]["jobs"] == len(in_l) and ward["totals"]["billed_inr"] == int(in_l.cost_inr.sum())
+    assert ward["totals"]["review_inr"] == sum(x["review_inr"] for x in ward["rows"])
+
+
 def test_road_list_filters_by_ward(client, t):
     body = client.get("/api/roads", params={"ward": "F/N"}).json()
     assert body["data_layer"] == "synthetic_organizer"

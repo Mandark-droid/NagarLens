@@ -1,16 +1,19 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { ClipboardList, IndianRupee, RotateCcw, ShieldAlert, Wrench } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis } from "recharts";
 
-import { DataBadge, ErrorBox, Kpi, Loading, PageTitle, Pill, Section } from "@/components/bits";
+import { DataBadge, ErrorBox, Loading, PageTitle, Pill, Section } from "@/components/bits";
 import { api } from "@/lib/api";
 import { cleanName, inr, inrFull, pct, when } from "@/lib/format";
 
+import { StatTile } from "../road-ui";
+
 // Same meaning as everywhere else: green = held, amber = failed, orange = needs review, purple = warranty.
-const HELD = "#1E7B34", FAILED = "#B07A00", FAILED_TEXT = "#8A5A00", REVIEW = "#C2410C";
+const HELD = "#1E7B34", FAILED = "#B07A00", FAILED_TEXT = "#8A5A00";
 const DAY_MS = 86_400_000;
 const day = (ts: number | string) => new Date(ts).toLocaleDateString("en-IN", { day: "numeric", month: "short" });
 const month = (ts: number | string) => new Date(ts).toLocaleDateString("en-IN", { month: "short" });
@@ -28,7 +31,7 @@ export default function RoadView() {
 
   return (
     <div className="space-y-5">
-      <Link href="/roads" className="text-[13px] font-semibold text-[#1E4FD8] hover:underline">← All roads in the ward</Link>
+      <Link href="/roads" className="road-control inline-flex min-h-9 items-center rounded-full px-3 text-[13px] font-semibold text-[#1E4FD8]">← All roads in the ward</Link>
       <PageTitle title={r.road_name}
         sub={`Segment ${r.segment_no} · ${r.road_id} · ward ${r.ward_code} · ${r.road_type} · ${r.surface} · ${r.lanes} lanes · ${r.length_m} m`} />
       <div className="flex flex-wrap items-center gap-2">
@@ -40,19 +43,22 @@ export default function RoadView() {
       </div>
 
       {warranty ? (
-        <div className="rounded-xl border border-[#C9C2F2] bg-[#F6F5FF] p-4 text-[13.5px] text-[#2A2466]">
-          <b>This segment is still in its warranty (defect liability) period.</b> Repairs here are normally done by the original
-          contractor at no cost to BMC. {inrFull(tot.billed_inr)} was billed on it this monsoon; the leads below show which jobs to check.
+        <div className="road-tile flex items-start gap-3 rounded-2xl p-4 text-[13.5px] text-[#2A2466]" data-tone="warranty">
+          <span className="road-chip grid size-9 shrink-0 place-items-center rounded-xl"><ShieldAlert className="size-5" aria-hidden /></span>
+          <div>
+            <b>This segment is still in its warranty (defect liability) period.</b> Repairs here are normally done by the original
+            contractor at no cost to BMC. {inrFull(tot.billed_inr)} was billed on it this monsoon; the leads below show which jobs to check.
+          </div>
         </div>
       ) : null}
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <Kpi label="Repairs this monsoon" value={tot.jobs} sub={`${tot.sla_met} finished within SLA`} />
-        <Kpi label="Billed" value={inr(tot.billed_inr)} sub="work order bills, Jun to Oct 2025" />
-        <Kpi label="Failed within 30 days" value={tot.reopened} tone={FAILED_TEXT}
-          sub={tot.jobs ? `${pct(tot.reopened / tot.jobs)} of repairs · ${inr(tot.reopened_billed_inr)} billed for them` : "no repairs"} />
-        <Kpi label="Needs review" value={tot.review_inr ? inr(tot.review_inr) : "–"} tone={REVIEW}
-          sub={`${tot.review_jobs} jobs with an audit lead, counted once`} />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatTile tone="blue" Icon={Wrench} label="Repairs this monsoon" value={tot.jobs} note={`${tot.sla_met} finished within SLA`} />
+        <StatTile tone="navy" Icon={IndianRupee} label="Billed" value={inr(tot.billed_inr)} note="work order bills, Jun to Oct 2025" />
+        <StatTile tone="failed" Icon={RotateCcw} label="Failed within 30 days" value={tot.reopened}
+          note={tot.jobs ? `${pct(tot.reopened / tot.jobs)} of repairs · ${inr(tot.reopened_billed_inr)} billed for them` : "no repairs"} />
+        <StatTile tone="review" Icon={ClipboardList} label="Needs review" value={tot.review_inr ? inr(tot.review_inr) : "–"}
+          note={`${tot.review_jobs} jobs with an audit lead, counted once`} />
       </div>
 
       {orders.length === 0 ? (
@@ -69,13 +75,18 @@ export default function RoadView() {
               <ChartLegend items={[["Billed for repairs that held", HELD, "square"], ["Billed for repairs that failed within 30 days", FAILED, "square"]]} />
               <ResponsiveContainer width="100%" height={230}>
                 <BarChart data={(d.monthly as any[]).map((m) => ({ ...m, held_billed_inr: m.billed_inr - m.reopened_billed_inr, label: month(`${m.month}-01T00:00:00`) }))} barSize={26}>
+                  <defs>
+                    {/* Same hues as the legend; the lighter left edge gives the bars a rounded, lit look. */}
+                    <linearGradient id="road-held" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stopColor={HELD} stopOpacity={0.8} /><stop offset="0.45" stopColor={HELD} /></linearGradient>
+                    <linearGradient id="road-failed" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stopColor={FAILED} stopOpacity={0.8} /><stop offset="0.45" stopColor={FAILED} /></linearGradient>
+                  </defs>
                   <CartesianGrid stroke="#EDEDE8" vertical={false} />
                   <XAxis dataKey="label" fontSize={11} tickLine={false} />
                   <YAxis fontSize={11} tickFormatter={(v) => (v ? inr(v) : "0")} width={62} tickLine={false} axisLine={false} />
                   <Tooltip cursor={{ fill: "#F1F1EC" }} formatter={(v: any, n: any) => [inrFull(Number(v)), n]}
                     labelFormatter={(l: any, p: any) => `${l} · ${p?.[0]?.payload?.jobs ?? 0} repairs, ${p?.[0]?.payload?.reopened ?? 0} failed`} />
-                  <Bar dataKey="held_billed_inr" name="Held" stackId="b" fill={HELD} stroke="#fff" strokeWidth={2} isAnimationActive={false} />
-                  <Bar dataKey="reopened_billed_inr" name="Failed within 30 days" stackId="b" fill={FAILED} stroke="#fff" strokeWidth={2} isAnimationActive={false} />
+                  <Bar dataKey="held_billed_inr" name="Held" stackId="b" fill="url(#road-held)" stroke="#fff" strokeWidth={2} isAnimationActive={false} />
+                  <Bar dataKey="reopened_billed_inr" name="Failed within 30 days" stackId="b" fill="url(#road-failed)" radius={[4, 4, 0, 0]} stroke="#fff" strokeWidth={2} isAnimationActive={false} />
                 </BarChart>
               </ResponsiveContainer>
             </Section>
@@ -181,7 +192,7 @@ export default function RoadView() {
         <Section title={`Other segments of ${r.road_name}`}>
           <div className="flex flex-wrap gap-2">
             {(d.other_segments as any[]).map((s) => (
-              <Link key={s.road_id} href={`/roads/${s.road_id}`} className="min-h-10 rounded-full border border-[#D5D6D0] bg-white px-3 py-1.5 text-[13px] font-semibold hover:bg-[#F1F1EC]">
+              <Link key={s.road_id} href={`/roads/${s.road_id}`} className="road-control min-h-10 rounded-full px-3 py-1.5 text-[13px] font-semibold">
                 Segment {s.segment_no} · ward {s.ward_code} · {s.road_id}
               </Link>
             ))}
