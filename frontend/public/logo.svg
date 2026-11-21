@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="NagarLens">
+  <title>NagarLens</title>
+  <!-- Lens: blue ring with a light glass, handle at the lower right -->
+  <circle cx="27" cy="27" r="19" fill="#EEF3FD" stroke="#1E4FD8" stroke-width="6"/>
+  <path d="M40.5 40.5 L56 56" stroke="#1E4FD8" stroke-width="8" stroke-linecap="round"/>
+  <path d="M40.5 40.5 L56 56" stroke="#FF9B6A" stroke-width="3" stroke-linecap="round"/>
+  <!-- Rupee sign inside the lens -->
+  <g fill="none" stroke="#C2410C" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M19 18 H35"/>
+    <path d="M19 24 H35"/>
+    <path d="M23 18 C33 18 33 30 23 30 H19 L31 39"/>
+  </g>
+</svg>

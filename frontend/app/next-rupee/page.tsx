@@ -202,17 +202,18 @@ export default function NextRupeePage() {
 }
 
 function Group({ title, items, note, open, status, budget }: { title: string; items: any[]; note?: string; open?: boolean; status?: string; budget?: number }) {
-  let running = 0;
+  // Running total after each funded item, computed up front (no mutation during render).
+  const runningTotals = items.reduce<number[]>((acc, it) => [...acc, (acc.at(-1) ?? 0) + (Number(it.est_cost_inr) || 0)], []);
+  const running = runningTotals.at(-1) ?? 0;
   return (
     <details open={open} className="rounded-2xl border border-[#D5D6D0] bg-white p-5">
       <summary className="cursor-pointer text-[16px] font-bold">
         {title} <span className="font-normal text-[#454952]">· {items.length}{note ? ` · ${note}` : ""}</span>
       </summary>
       <div className="mt-3 space-y-2">
-        {items.map((it, i) => {
-          running += Number(it.est_cost_inr) || 0;
-          return <IssueCard key={it.issue_id} it={it} rank={i + 1} hidePill={it.status === status} running={budget != null ? running : undefined} />;
-        })}
+        {items.map((it, i) => (
+          <IssueCard key={it.issue_id} it={it} rank={i + 1} hidePill={it.status === status} running={budget != null ? runningTotals[i] : undefined} />
+        ))}
         {budget != null && items.length ? (
           <div className="flex items-center gap-2 pt-1 text-[12.5px] font-semibold text-[#9A3208]">
             <span className="h-0.5 flex-1 border-t-2 border-dashed border-[#C2410C]" />

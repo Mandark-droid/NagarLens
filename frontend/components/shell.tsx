@@ -43,10 +43,12 @@ export default function Shell({ children }: { children: React.ReactNode }) {
           }}
         >
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="text-[13px] font-semibold tracking-wide text-[#C9CBD1]">
+            <div className="flex flex-wrap items-center gap-y-1 text-[13px] font-semibold tracking-wide text-[#C9CBD1]">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo.svg" alt="" width={34} height={34} className="mr-2 h-[34px] w-[34px] rounded-lg bg-white p-0.5" />
               <span className="text-[17px] font-extrabold text-white">Nagar</span>
               <span className="text-[17px] font-extrabold text-[#FF9B6A]">Lens</span>
-              <span className="ml-2">Follow every rupee from a complaint to a fix that held</span>
+              <span className="w-full md:ml-2 md:w-auto">Follow every rupee from a complaint to a fix that held</span>
             </div>
             <div className="flex w-full flex-wrap items-center gap-2 text-[12px] md:w-auto">
               <span className="whitespace-nowrap rounded-full bg-white/10 px-2.5 py-1">
