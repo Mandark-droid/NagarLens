@@ -129,6 +129,46 @@
   }
 }
 /* NagarLens base: system sans stack (no font download needed), page background, Leaflet tooltip */
-html, body { font-family: Inter, "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, "Noto Sans", "Noto Sans Devanagari", sans-serif; background: #F6F6F3; color: #16181D; }
+html, body { font-family: Inter, "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, "Noto Sans", "Noto Sans Devanagari", sans-serif; color: #16181D; }
 .leaflet-container { font-family: inherit; background: #EEF0F2; }
 .leaflet-tooltip { font-size: 12px; line-height: 1.45; border-radius: 8px; }
+
+/* Dashboard look (soft gradient page, frosted cards, pastel stat tiles). Colour meaning is unchanged:
+   green = held, amber = failed, orange = needs review, purple = warranty, blue = neutral. */
+body {
+  background:
+    radial-gradient(60rem 40rem at 0% 0%, rgb(30 79 216 / 0.10), transparent 60%),
+    radial-gradient(50rem 36rem at 100% 10%, rgb(124 92 255 / 0.09), transparent 60%),
+    radial-gradient(60rem 40rem at 50% 100%, rgb(18 184 166 / 0.07), transparent 60%),
+    #EEF2F8;
+}
+.nl-card {
+  background: rgb(255 255 255 / 0.86);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgb(255 255 255 / 0.95);
+  box-shadow: 0 1px 2px rgb(16 24 40 / 0.04), 0 20px 44px -28px rgb(30 56 120 / 0.35);
+}
+.nl-tile {
+  --tile: #1e4fd8;
+  background: linear-gradient(150deg, color-mix(in srgb, var(--tile) 15%, #ffffff), color-mix(in srgb, var(--tile) 4%, #ffffff) 70%);
+  border: 1px solid rgb(255 255 255 / 0.95);
+  box-shadow: 0 1px 2px rgb(16 24 40 / 0.04), 0 16px 30px -20px color-mix(in srgb, var(--tile) 55%, transparent);
+}
+.nl-chip {
+  color: #ffffff;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--tile) 72%, #ffffff), var(--tile));
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.4), 0 8px 14px -6px color-mix(in srgb, var(--tile) 60%, transparent);
+}
+.nl-nav {
+  background: rgb(255 255 255 / 0.72);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgb(255 255 255 / 0.95);
+  box-shadow: 0 10px 28px -20px rgb(30 56 120 / 0.4);
+}
+.nl-hero { box-shadow: 0 24px 50px -28px rgb(11 31 102 / 0.7); }
+.recharts-default-tooltip {
+  border-radius: 12px !important;
+  border: 1px solid #E3E8F2 !important;
+  box-shadow: 0 14px 30px -14px rgb(16 24 40 / 0.3);
+}
+table thead th { letter-spacing: 0.03em; }

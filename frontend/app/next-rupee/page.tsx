@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { ArrowDownUp, HardHat, ListChecks, ShieldCheck, Wallet } from "lucide-react";
 import { useState } from "react";
 
 import { DataBadge, ErrorBox, Kpi, Loading, PageTitle, Pill, Section } from "@/components/bits";
@@ -128,11 +129,11 @@ export default function NextRupeePage() {
       </Section>
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
-        <Kpi label="Planned (estimate)" value={inr(d.total_inr)} sub={`of ${inr(d.budget_inr)} · ${inr(d.unallocated_inr)} left`} tone="#1E7B34" />
-        <Kpi label="Issues funded" value={d.selected.length} sub={`${d.deferred.length} deferred`} />
-        <Kpi label="Sent to warranty" value={d.dlp_routed.length} sub="₹0 to BMC" tone="#5B4BC4" />
-        <Kpi label="Ranked by risk, not volume" value={`${d.top10_differ_from_complaint_ranking} of top 10`} sub="would rank lower by complaint count alone" />
-        <Kpi label="Crew capacity" value={`${d.crew_jobs} jobs`} sub={`in ${d.plan_days} days`} />
+        <Kpi icon={Wallet} label="Planned (estimate)" value={inr(d.total_inr)} sub={`of ${inr(d.budget_inr)} · ${inr(d.unallocated_inr)} left`} tone="#1E7B34" />
+        <Kpi icon={ListChecks} label="Issues funded" value={d.selected.length} sub={`${d.deferred.length} deferred`} />
+        <Kpi icon={ShieldCheck} label="Sent to warranty" value={d.dlp_routed.length} sub="₹0 to BMC" tone="#5B4BC4" />
+        <Kpi icon={ArrowDownUp} label="Ranked by risk, not volume" value={`${d.top10_differ_from_complaint_ranking} of top 10`} sub="would rank lower by complaint count alone" />
+        <Kpi icon={HardHat} tone="#16298A" label="Crew capacity" value={`${d.crew_jobs} jobs`} sub={`in ${d.plan_days} days`} />
       </div>
 
       <Group title="Funded, in priority order" items={d.selected} open note={`${inr(d.total_inr)} estimated`} status="funded" budget={d.budget_inr} />

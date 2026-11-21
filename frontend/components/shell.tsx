@@ -31,20 +31,20 @@ export default function Shell({ children }: { children: React.ReactNode }) {
   const w = wards.data?.rows?.find((r: any) => r.ward_code === ward);
 
   return (
-    <div className="min-h-screen bg-[#F6F6F3] text-[#16181D]">
+    <div className="min-h-screen text-[#16181D]">
       <header className="mx-auto max-w-[1280px] px-5 pt-5">
         {/* Hero: the whole pitch on first paint. Illustration generated with Codex (public/hero.png). */}
         <div
-          className="relative overflow-hidden rounded-2xl bg-[#16181D] px-7 py-6 text-[#F6F6F3]"
+          className="nl-hero relative overflow-hidden rounded-3xl bg-[#0E1B4D] px-7 py-6 text-[#F6F6F3]"
           style={{
             backgroundImage:
-              "linear-gradient(90deg,#16181D 0%,#16181D 52%,rgba(22,24,29,.6) 72%,rgba(22,24,29,.05) 100%),url(/hero.png)",
+              "linear-gradient(90deg,#0E1B4D 0%,#13267A 52%,rgba(19,38,122,.62) 72%,rgba(19,38,122,.08) 100%),url(/hero.png)",
             backgroundSize: "cover",
             backgroundPosition: "right center",
           }}
         >
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex flex-wrap items-center gap-y-1 text-[13px] font-semibold tracking-wide text-[#C9CBD1]">
+            <div className="flex flex-wrap items-center gap-y-1 text-[13px] font-semibold tracking-wide text-[#D3D9EE]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/logo.svg" alt="" width={34} height={34} className="mr-2 h-[34px] w-[34px] rounded-lg bg-white p-0.5" />
               <span className="text-[17px] font-extrabold text-white">Nagar</span>
@@ -69,11 +69,11 @@ export default function Shell({ children }: { children: React.ReactNode }) {
           </div>
           <div className="mt-4 flex flex-wrap items-end gap-x-7 gap-y-3">
             <Stat label="All wards · billed for 2025 monsoon road repairs" value={o ? inr(o.billed_inr) : "…"} />
-            <span aria-hidden className="hidden pb-1 text-[26px] text-[#8A8F98] md:inline">→</span>
+            <span aria-hidden className="hidden pb-1 text-[26px] text-[#9AA6CF] md:inline">→</span>
             <Stat label="All wards · needs a second look (3 rules, counted once)" value={o ? inr(o.review.total_at_risk_inr) : "…"} tone="#FF9B6A" />
-            <span aria-hidden className="hidden pb-1 text-[26px] text-[#8A8F98] md:inline">→</span>
+            <span aria-hidden className="hidden pb-1 text-[26px] text-[#9AA6CF] md:inline">→</span>
             <div>
-              <div className="text-[12px] text-[#C9CBD1]">
+              <div className="text-[12px] text-[#D3D9EE]">
                 {w ? `Ward ${ward}: ${inr(w.total_review_inr)} to review, then reinvest by risk` : "Recover, then reinvest by risk"}
               </div>
               <Link
@@ -84,11 +84,11 @@ export default function Shell({ children }: { children: React.ReactNode }) {
               </Link>
             </div>
           </div>
-          <div className="mt-3 text-[11.5px] text-[#C9CBD1]">
+          <div className="mt-3 text-[11.5px] text-[#D3D9EE]">
             Synthetic organizer data · all contractors fictional · leads for review, not accusations
           </div>
         </div>
-        <nav aria-label="Pages" className="mt-4 flex flex-nowrap gap-1 overflow-x-auto border-b border-[#D5D6D0] [scrollbar-width:none]">
+        <nav aria-label="Pages" className="nl-nav mt-4 flex flex-nowrap gap-1 overflow-x-auto rounded-2xl p-1.5 [scrollbar-width:none]">
           {NAV.map((n) => {
             const active = n.href === "/" ? path === "/" : path.startsWith(n.href);
             return (
@@ -97,8 +97,8 @@ export default function Shell({ children }: { children: React.ReactNode }) {
                 href={n.href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-t-lg px-3.5 py-2 text-[13.5px] font-semibold",
-                  active ? "border-b-[3px] border-[#1E4FD8] text-[#1E4FD8]" : "text-[#454952] hover:text-[#16181D]",
+                  "flex min-h-10 shrink-0 items-center whitespace-nowrap rounded-xl px-3.5 py-2 text-[13.5px] font-semibold transition-colors",
+                  active ? "bg-[#1E4FD8] text-white shadow-[0_8px_16px_-8px_rgb(30_79_216/0.8)]" : "text-[#3A3F4A] hover:bg-white hover:text-[#16181D]",
                 )}
               >
                 {n.label}
@@ -119,7 +119,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
 function Stat({ label, value, tone }: { label: string; value: string; tone?: string }) {
   return (
     <div>
-      <div className="text-[12px] text-[#C9CBD1]">{label}</div>
+      <div className="text-[12px] text-[#D3D9EE]">{label}</div>
       <div className="text-[30px] font-extrabold leading-tight" style={{ color: tone ?? "#FFFFFF" }}>
         {value}
       </div>

@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Copy, Scale, ShieldAlert } from "lucide-react";
 import { useState } from "react";
 
 import { DataBadge, ErrorBox, Kpi, Loading, PageTitle, Pill, Section } from "@/components/bits";
@@ -13,6 +14,8 @@ import { cleanName, inr, inrFull, when } from "@/lib/format";
 import { useWard } from "../providers";
 
 const FLAG_RULES = ["dlp_paid_by_bmc", "overbilled_vs_rate_card", "duplicate_bill"];
+
+const RULE_ICON: Record<string, typeof ShieldAlert> = { dlp_paid_by_bmc: ShieldAlert, overbilled_vs_rate_card: Scale, duplicate_bill: Copy };
 
 export default function AuditPage() {
   const { ward } = useWard();
@@ -38,7 +41,7 @@ export default function AuditPage() {
       />
       <div className="grid gap-3 md:grid-cols-3">
         {((onlyWard ? wardSum.data?.review?.by_rule : null) ?? city.data.review.by_rule).map((r: any) => (
-          <Kpi key={r.rule_id} label={r.label} value={inr(r.at_risk_inr)} sub={`${r.jobs} jobs ${onlyWard && wardSum.data ? `in ward ${ward}` : "city-wide"}`} tone={RULE_COLOR[r.rule_id]} />
+          <Kpi key={r.rule_id} icon={RULE_ICON[r.rule_id] ?? ShieldAlert} label={r.label} value={inr(r.at_risk_inr)} sub={`${r.jobs} jobs ${onlyWard && wardSum.data ? `in ward ${ward}` : "city-wide"}`} tone={RULE_COLOR[r.rule_id]} />
         ))}
       </div>
 

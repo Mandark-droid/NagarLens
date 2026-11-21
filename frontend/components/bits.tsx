@@ -1,16 +1,24 @@
+import type { LucideIcon } from "lucide-react";
+
 import { cn } from "@/lib/utils";
 
 // Small shared building blocks. Colour meaning is the same everywhere:
 // green = held, amber = failed, orange = needs review, purple = warranty, blue = neutral accent.
 
-export function Kpi({ label, value, sub, tone }: { label: string; value: React.ReactNode; sub?: React.ReactNode; tone?: string }) {
+export function Kpi({ label, value, sub, tone, icon: Icon }: { label: string; value: React.ReactNode; sub?: React.ReactNode; tone?: string; icon?: LucideIcon }) {
+  // Pastel tile tinted by its meaning colour; the value stays in dark ink so it reads on every tint.
   return (
-    <div className="rounded-xl border border-[#D5D6D0] bg-white px-4 py-3">
-      <div className="text-[12px] font-semibold text-[#454952]">{label}</div>
-      <div className="text-[26px] font-extrabold leading-tight" style={{ color: tone ?? "#16181D" }}>
-        {value}
+    <div className="nl-tile flex flex-col gap-2 rounded-2xl px-4 py-3.5 sm:flex-row sm:items-start sm:gap-3" style={{ "--tile": tone ?? "#1E4FD8" } as React.CSSProperties}>
+      {Icon ? (
+        <span className="nl-chip mt-0.5 grid size-10 shrink-0 place-items-center rounded-xl">
+          <Icon className="size-5" aria-hidden />
+        </span>
+      ) : null}
+      <div className="min-w-0">
+        <div className="text-[12px] font-semibold text-[#3A3F4A]">{label}</div>
+        <div className="whitespace-nowrap text-[24px] font-extrabold leading-tight tracking-tight text-[#16181D] sm:text-[26px]">{value}</div>
+        {sub ? <div className="text-[12px] text-[#3A3F4A]">{sub}</div> : null}
       </div>
-      {sub ? <div className="text-[12px] text-[#454952]">{sub}</div> : null}
     </div>
   );
 }
@@ -58,10 +66,10 @@ export function SourceBadge({ source }: { source?: string }) {
 
 export function Section({ title, hint, children, right }: { title: string; hint?: string; children: React.ReactNode; right?: React.ReactNode }) {
   return (
-    <section className="rounded-2xl border border-[#D5D6D0] bg-white p-5">
+    <section className="nl-card rounded-3xl p-5 sm:p-6">
       <div className="mb-3 flex items-start justify-between gap-3">
         <div>
-          <h2 className="text-[16px] font-bold text-[#16181D]">{title}</h2>
+          <h2 className="text-[17px] font-extrabold tracking-tight text-[#16181D]">{title}</h2>
           {hint ? <p className="text-[12.5px] text-[#454952]">{hint}</p> : null}
         </div>
         {right}
@@ -72,7 +80,7 @@ export function Section({ title, hint, children, right }: { title: string; hint?
 }
 
 export function Loading({ label = "Loading…" }: { label?: string }) {
-  return <div className="animate-pulse rounded-xl border border-dashed border-[#D5D6D0] bg-white p-6 text-sm text-[#454952]">{label}</div>;
+  return <div className="nl-card animate-pulse rounded-3xl p-6 text-sm text-[#454952]">{label}</div>;
 }
 
 export function ErrorBox({ error }: { error: unknown }) {
@@ -88,7 +96,7 @@ export function ErrorBox({ error }: { error: unknown }) {
 export function PageTitle({ title, sub }: { title: string; sub?: string }) {
   return (
     <div className="mb-4">
-      <h1 className="text-[24px] font-extrabold tracking-tight text-[#16181D]">{title}</h1>
+      <h1 className="text-[28px] font-extrabold tracking-tight text-[#16181D]">{title}</h1>
       {sub ? <p className="text-[13.5px] text-[#454952]">{sub}</p> : null}
     </div>
   );

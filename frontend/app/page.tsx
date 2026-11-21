@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useQuery } from "@tanstack/react-query";
+import { CircleCheck, ClipboardList, Landmark, ReceiptIndianRupee, RotateCcw } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { Bar, CartesianGrid, ComposedChart, Layer, Legend, Line, Rectangle, ResponsiveContainer, Sankey, Tooltip, XAxis, YAxis } from "recharts";
@@ -44,11 +45,11 @@ export default function OverviewPage() {
     <div className="space-y-5">
       <PageTitle title={`Where did ${w.ward_name}'s repair money go?`} sub={`Ward ${w.ward_code} · Monsoon 2025 · billed amounts from work orders, not payments`} />
       <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
-        <Kpi label="Allocated budget" value={inr(w.budget_inr)} sub="Jun–Sep 2025" />
-        <Kpi label="Billed (work orders)" value={inr(w.billed_inr)} sub={w.billed_vs_budget > 1 ? <span className="font-semibold text-[#9A3208]">{pct(w.billed_vs_budget)} of budget · over by {inr(w.billed_inr - w.budget_inr)}</span> : `${pct(w.billed_vs_budget)} of budget · ${w.jobs} jobs`} />
-        <Kpi label="Spent on fixes that failed" value={inr(w.failed_fix_spend_inr)} sub={`${pct(w.reopen_rate)} re-opened; includes jobs also counted under an audit rule`} tone="#8A5A00" />
-        <Kpi label="Repairs on time" value={pct(w.on_time_rate)} sub={`similar wards manage ${pct(w.expected_on_time_rate)}`} />
-        <Kpi label="To review" value={inr(d.review.total_at_risk_inr)} sub={`${d.review.jobs} jobs, counted once`} tone="#C2410C" />
+        <Kpi icon={Landmark} label="Allocated budget" value={inr(w.budget_inr)} sub="Jun–Sep 2025" />
+        <Kpi icon={ReceiptIndianRupee} tone="#16298A" label="Billed (work orders)" value={inr(w.billed_inr)} sub={w.billed_vs_budget > 1 ? <span className="font-semibold text-[#9A3208]">{pct(w.billed_vs_budget)} of budget · over by {inr(w.billed_inr - w.budget_inr)}</span> : `${pct(w.billed_vs_budget)} of budget · ${w.jobs} jobs`} />
+        <Kpi icon={RotateCcw} label="Spent on fixes that failed" value={inr(w.failed_fix_spend_inr)} sub={`${pct(w.reopen_rate)} re-opened; includes jobs also counted under an audit rule`} tone="#8A5A00" />
+        <Kpi icon={CircleCheck} tone="#1E7B34" label="Repairs on time" value={pct(w.on_time_rate)} sub={`similar wards manage ${pct(w.expected_on_time_rate)}`} />
+        <Kpi icon={ClipboardList} label="To review" value={inr(d.review.total_at_risk_inr)} sub={`${d.review.jobs} jobs, counted once`} tone="#C2410C" />
       </div>
 
       <div className="grid gap-5 lg:grid-cols-5">
@@ -94,7 +95,7 @@ export default function OverviewPage() {
               <YAxis yAxisId="inr" orientation="right" fontSize={11} tickFormatter={(v) => inr(v)} />
               <Tooltip formatter={(v: any, n: any) => (String(n).startsWith("Billed") ? inr(Number(v)) : `${Number(v).toFixed(0)} mm`)} />
               <Legend formatter={(v: any) => <span className="text-[12.5px] text-[#2A2D33]">{v}</span>} />
-              <Bar yAxisId="rain" dataKey="rainfall_mm" name="Rainfall, mm (left axis)" fill="#9DB4EE" />
+              <Bar yAxisId="rain" dataKey="rainfall_mm" name="Rainfall, mm (left axis)" fill="#9DB4EE" radius={[4, 4, 0, 0]} />
               <Line yAxisId="inr" dataKey="billed_inr" name="Billed, ₹ (right axis)" stroke="#C2410C" strokeWidth={2} dot={false} />
             </ComposedChart>
           </ResponsiveContainer>

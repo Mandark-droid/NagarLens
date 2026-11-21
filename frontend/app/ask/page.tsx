@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useMutation } from "@tanstack/react-query";
+import { Activity, ArrowDownUp, FileText, Gauge, IndianRupee, MapPin, RotateCcw, Wrench } from "lucide-react";
 import { useState } from "react";
 
 import { DataBadge, Kpi, PageTitle, Section, SourceBadge } from "@/components/bits";
@@ -83,13 +84,14 @@ export default function AskPage() {
           </div>
 
           <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
-            <Kpi label="Complaint" value={d.complaint.complaint_id} sub={`${when(d.complaint.received_at, false)} · ${d.complaint.channel}`} />
-            <Kpi label="Status" value={d.status} sub={d.complaint.category_reported} />
+            <Kpi icon={FileText} label="Complaint" value={d.complaint.complaint_id} sub={`${when(d.complaint.received_at, false)} · ${d.complaint.channel}`} />
+            <Kpi icon={Activity} label="Status" value={d.status} sub={d.complaint.category_reported} />
             {w ? (
               <>
-                <Kpi label="Work order" value={w.work_order_id} sub={`${w.repair_method} · ${cleanName(w.contractor_name)}`} />
-                <Kpi label="Billed" value={inr(w.cost_inr)} sub={`rate card ${inrFull(Math.round(w.expected_cost_inr))}`} />
+                <Kpi icon={Wrench} label="Work order" value={w.work_order_id} sub={`${w.repair_method} · ${cleanName(w.contractor_name)}`} />
+                <Kpi icon={IndianRupee} tone="#16298A" label="Billed" value={inr(w.cost_inr)} sub={`rate card ${inrFull(Math.round(w.expected_cost_inr))}`} />
                 <Kpi
+                  icon={RotateCcw}
                   label="Outcome"
                   value={w.reopened_within_30d === "Y" ? "Re-opened" : "Held"}
                   sub={`${w.sla_met === "Y" ? "on time" : "late"} · ${w.sla_hours} h SLA`}
@@ -98,7 +100,7 @@ export default function AskPage() {
               </>
             ) : (
               <div className="col-span-2 md:col-span-3">
-                <Kpi label="Work order" value="Not linked to a work order yet" sub="No repair job has been recorded against this complaint" />
+                <Kpi icon={Wrench} label="Work order" value="Not linked to a work order yet" sub="No repair job has been recorded against this complaint" />
               </div>
             )}
           </div>
@@ -106,9 +108,9 @@ export default function AskPage() {
           {o ? (
             <Section title="Where it stands in the ward's repair plan" hint="Open complaints are matched to a road and ranked by public risk (candidate match, not an exact link).">
               <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
-                <Kpi label="Road" value={o.road_name ?? o.road_id ?? "–"} sub={o.match_note} />
-                <Kpi label="Priority" value={o.rank ? `${o.rank} of ${o.of}` : "–"} sub={`in the ward ${o.ward_code ?? ""} plan`} tone="#1E4FD8" />
-                <Kpi label="Risk score" value={o.risk_score != null ? Number(o.risk_score).toFixed(1) : "–"} sub="0 to 100" />
+                <Kpi icon={MapPin} label="Road" value={o.road_name ?? o.road_id ?? "–"} sub={o.match_note} />
+                <Kpi icon={ArrowDownUp} label="Priority" value={o.rank ? `${o.rank} of ${o.of}` : "–"} sub={`in the ward ${o.ward_code ?? ""} plan`} tone="#1E4FD8" />
+                <Kpi icon={Gauge} label="Risk score" value={o.risk_score != null ? Number(o.risk_score).toFixed(1) : "–"} sub="0 to 100" />
               </div>
               {o.why ? (
                 <div className="mt-3 flex flex-wrap gap-1">
