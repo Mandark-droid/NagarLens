@@ -20,16 +20,3 @@ export function StatTile({ label, value, note, tone, Icon }: { label: string; va
     </div>
   );
 }
-
-/** 24-spoke wheel, drawn in currentColor. Decorative only. */
-export function Chakra({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 100 100" className={className} fill="none" stroke="currentColor" aria-hidden>
-      <circle cx={50} cy={50} r={45} strokeWidth={6} />
-      <circle cx={50} cy={50} r={8} fill="currentColor" stroke="none" />
-      {Array.from({ length: 24 }, (_, i) => (
-        <line key={i} x1={50} y1={50} x2={50} y2={8} strokeWidth={2} transform={`rotate(${i * 15} 50 50)`} />
-      ))}
-    </svg>
-  );
-}

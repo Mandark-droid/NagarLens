@@ -5,12 +5,12 @@ import { IndianRupee, MapPinned, RotateCcw, Wrench } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-import { DataBadge, ErrorBox, Loading, Pill, Section } from "@/components/bits";
+import { DataBadge, ErrorBox, Loading, PageTitle, Pill, Section } from "@/components/bits";
 import { api, qs } from "@/lib/api";
 import { inr, pct } from "@/lib/format";
 
 import { useWard } from "../providers";
-import { Chakra, StatTile } from "./road-ui";
+import { StatTile } from "./road-ui";
 
 export default function RoadsPage() {
   const { ward } = useWard();
@@ -25,18 +25,8 @@ export default function RoadsPage() {
 
   return (
     <div className="space-y-5">
-      <section className="road-hero relative overflow-hidden rounded-3xl px-6 py-7 sm:px-10 sm:py-9">
-        <div className="relative z-10 max-w-xl">
-          <p className="text-[12px] font-bold uppercase tracking-widest text-white/75">Ward {ward} · June to October 2025</p>
-          <h1 className="mt-2 text-[28px] font-extrabold tracking-tight sm:text-[34px]">Did the fix last, road by road?</h1>
-          <p className="mt-2 text-[14px] leading-relaxed text-white/85">
-            Open a road segment to see each repair this monsoon, what it was billed and whether it held.
-          </p>
-        </div>
-        <div className="road-chakra-tilt pointer-events-none absolute -right-10 top-1/2 hidden size-56 -translate-y-1/2 text-white/85 sm:block lg:right-10">
-          <Chakra className="road-chakra-spin size-full" />
-        </div>
-      </section>
+      <PageTitle title="Did the fix last, road by road?"
+        sub={`Ward ${ward} · June to October 2025. Open a road segment to see each repair this monsoon, what it was billed and whether it held.`} />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatTile tone="navy" Icon={MapPinned} label="Road segments" value={tot.segments} note={`in ward ${ward}`} />
