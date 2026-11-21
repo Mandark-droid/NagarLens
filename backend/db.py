@@ -23,6 +23,17 @@ class LeadReview(SQLModel, table=True):
     decided_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
+class RepairFeedback(SQLModel, table=True):
+    """Citizen answer to "Did this repair survive?" on the Public Repair Receipt. New data (Synthetic, NagarLens):
+    never added to organizer totals. A "failed" answer on a road under DLP is recorded as a warranty case at Rs 0 to BMC."""
+    id: int | None = Field(default=None, primary_key=True)
+    work_order_id: str = Field(index=True)
+    answer: str                      # survived | failed | unsure
+    note: str = ""
+    warranty_case: bool = False
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
 def init_db() -> None:
     SQLModel.metadata.create_all(engine)
 

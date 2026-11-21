@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
 import { DataBadge, ErrorBox, Kpi, Loading, PageTitle, Pill, Section } from "@/components/bits";
+import VerdictPanel from "@/components/verdict-panel";
 import { api, DECISION_LABEL, qs, RULE_COLOR } from "@/lib/api";
 import { cleanName, inr, inrFull, when } from "@/lib/format";
 
@@ -142,6 +143,8 @@ function Evidence({ id }: { id: string }) {
         <Cell label="Fair context" value={f.fair_context} plain />
         <Cell label="Next action" value={f.review_action} />
       </div>
+
+      <VerdictPanel findingId={id} />
 
       {/* Officer decision. Stored in SQLite via PUT /api/findings/{id}/review. See docs/tasks/harsh.md. */}
       <div className="mt-4 rounded-xl bg-[#F6F6F3] p-3">
