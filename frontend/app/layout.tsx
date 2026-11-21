@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
 import Shell from "@/components/shell";
 
@@ -15,7 +16,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en">
       <body className="antialiased">
         <Providers>
-          <Shell>{children}</Shell>
+          {/* Shell reads the URL; the boundary lets dynamic routes such as /roads/[id] build. */}
+          <Suspense>
+            <Shell>{children}</Shell>
+          </Suspense>
         </Providers>
       </body>
     </html>
