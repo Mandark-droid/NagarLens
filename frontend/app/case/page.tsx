@@ -2,7 +2,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import Link from "next/link";
+import { useState, useSyncExternalStore } from "react";
 
 import { DataBadge, ErrorBox, Loading, PageTitle, Pill, Section, SourceBadge } from "@/components/bits";
 import { api, qs, RULE_COLOR } from "@/lib/api";
@@ -18,9 +19,11 @@ const TONE: Record<string, string> = { ok: "#1E7B34", warn: "#8A5A00", flag: "#C
 export default function CasePage() {
   const { ward } = useWard();
   const [picked, setPicked] = useState<string | null>(null);
+  // /case?wo=WO25-00020 opens that work order (used by the road history page)
+  const fromUrl = useSyncExternalStore(() => () => {}, () => new URLSearchParams(window.location.search).get("wo"), () => null);
   const presets = useQuery({ queryKey: ["case-presets"], queryFn: () => api<any[]>("/cases/presets") });
   const inWard = useQuery({ queryKey: ["cases", ward], queryFn: () => api(`/cases${qs({ ward, limit: 100 })}`) });
-  const id = picked ?? presets.data?.[0]?.work_order_id ?? null;
+  const id = picked ?? fromUrl ?? presets.data?.[0]?.work_order_id ?? null;
   const q = useQuery({ queryKey: ["case", id], queryFn: () => api(`/cases/${id}`), enabled: !!id });
   const verdict = useQuery({ queryKey: ["case-verdict", id], queryFn: () => api(`/cases/${id}/verdict`), enabled: !!id });
 
@@ -172,6 +175,7 @@ function CaseView({ d, verdict, verdictLoading }: { d: any; verdict: any; verdic
         right={d.road.under_dlp === "Y"
           ? <Pill color="#3A2E8C" bg="#EFEDFF">Under warranty · resurfaced {when(d.road.last_resurfaced, false)}</Pill>
           : <Pill>Warranty expired · resurfaced {when(d.road.last_resurfaced, false)}</Pill>}>
+        <Link href={`/roads/${d.road.road_id}`} className="mb-2 inline-block text-[13px] font-semibold text-[#1E4FD8] hover:underline">Open the full road history →</Link>
         <div className="max-h-[420px] overflow-auto">
           <table className="w-full min-w-[760px] text-[12.5px]">
             <thead className="sticky top-0 bg-white text-left text-[11px] uppercase tracking-wide text-[#454952]">

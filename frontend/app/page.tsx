@@ -3,6 +3,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { Bar, CartesianGrid, ComposedChart, Layer, Legend, Line, Rectangle, ResponsiveContainer, Sankey, Tooltip, XAxis, YAxis } from "recharts";
 
 import { DataBadge, ErrorBox, Kpi, Loading, PageTitle, Section } from "@/components/bits";
@@ -109,7 +110,7 @@ export default function OverviewPage() {
               {d.roads.slice(0, 8).map((r: any) => (
                 <tr key={r.road_id} className="border-t border-[#EDEDE8]">
                   <td className="py-1.5 font-semibold">
-                    {r.road_name} <span className="font-normal text-[#454952]">{r.road_id}</span>
+                    <Link href={`/roads/${r.road_id}`} className="text-[#1E4FD8] hover:underline">{r.road_name}</Link> <span className="font-normal text-[#454952]">{r.road_id}</span>
                     {r.under_dlp === "Y" ? <span className="ml-2 rounded-full bg-[#EFEDFF] px-2 py-0.5 text-[11px] font-bold text-[#3A2E8C]">under warranty</span> : null}
                   </td>
                   <td className="whitespace-nowrap pl-3 text-right tabular-nums">{r.jobs}</td><td className="whitespace-nowrap pl-3 text-right tabular-nums">{inr(r.billed_inr)}</td><td className="whitespace-nowrap pl-3 text-right tabular-nums">{r.reopened}</td><td className="whitespace-nowrap pl-3 text-right font-semibold tabular-nums text-[#C2410C]">{r.review_inr ? inr(r.review_inr) : "–"}</td>
