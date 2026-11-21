@@ -1,0 +1,15 @@
+.git
+.venv
+**/node_modules
+**/.next
+**/__pycache__
+*.pyc
+*.db
+.env
+.env.*
+!.env.example
+.idea
+.pytest_cache
+demo/out
+docs/TEAM_PLAN.md
+docs/FOLLOW_THE_RUPEE_HACKATHON_SPEC.md

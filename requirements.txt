@@ -18,3 +18,5 @@ httpx
 playwright
 imageio-ffmpeg
 edge-tts
+# optional: deploy/push_space.py (Hugging Face Space deployment)
+huggingface_hub

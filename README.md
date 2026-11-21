@@ -15,8 +15,8 @@ Built in one day for the challenge *"Follow the Rupee: where did Mumbai's road r
 
 ## Demo
 
-- **Demo video:** _link coming shortly_ <!-- DEMO_VIDEO_URL -->
-- **Live app (Hugging Face Space):** _link coming shortly_ <!-- LIVE_APP_URL -->
+- **Demo video (2 min, narrated):** [nagarlens_demo.mp4](https://github.com/Mandark-droid/NagarLens/releases/download/demo-video/nagarlens_demo.mp4) · [release page](https://github.com/Mandark-droid/NagarLens/releases/tag/demo-video)
+- **Live app:** <https://kshitijthakkar-nagarlens.hf.space> ([Hugging Face Space](https://huggingface.co/spaces/kshitijthakkar/nagarlens)). The hosted copy runs without a Claude API key, so its AI panels show cached answers or template text, and officer decisions reset when the Space restarts. Deployment notes: [deploy/README.md](deploy/README.md).
 - **Run it locally:** see [Quick start](#quick-start).
 
 | | |
