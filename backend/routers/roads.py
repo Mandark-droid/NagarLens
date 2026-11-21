@@ -39,8 +39,11 @@ def roads(ward: str | None = None, limit: int = Query(300, le=500)):
     out["reopen_rate"] = (out.reopened / out.jobs).where(out.jobs > 0)
     if ward:
         out = out[out.ward_code == ward]
+    jobs, reopened = int(out.jobs.sum()), int(out.reopened.sum())
+    totals = {"segments": int(len(out)), "jobs": jobs, "billed_inr": int(out.billed_inr.sum()), "reopened": reopened,
+              "reopen_rate": reopened / jobs if jobs else None, "review_inr": int(out.review_inr.sum())}
     out = out.sort_values(["billed_inr", "road_id"], ascending=[False, True]).head(limit)
-    return {"data_layer": DATA_LAYER, "rows": records(out)}
+    return {"data_layer": DATA_LAYER, "totals": totals, "rows": records(out)}
 
 
 @router.get("/roads/{road_id}")

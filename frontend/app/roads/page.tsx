@@ -1,6 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { IndianRupee, MapPinned, RotateCcw, Wrench } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -9,6 +10,7 @@ import { api, qs } from "@/lib/api";
 import { inr, pct } from "@/lib/format";
 
 import { useWard } from "../providers";
+import { StatTile } from "./road-ui";
 
 export default function RoadsPage() {
   const { ward } = useWard();
@@ -17,17 +19,25 @@ export default function RoadsPage() {
 
   if (roads.isError) return <ErrorBox error={roads.error} />;
   if (!roads.data) return <Loading />;
+  const tot = roads.data.totals;
   const needle = q.trim().toLowerCase();
   const rows = (roads.data.rows as any[]).filter((r) => !needle || `${r.road_name} ${r.road_id}`.toLowerCase().includes(needle));
 
   return (
     <div className="space-y-5">
       <PageTitle title="Did the fix last, road by road?"
-        sub={`Every road segment in ward ${ward}. Open one to see each repair this monsoon, what it was billed and whether it held.`} />
+        sub={`Ward ${ward} · June to October 2025. Open a road segment to see each repair this monsoon, what it was billed and whether it held.`} />
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatTile tone="navy" Icon={MapPinned} label="Road segments" value={tot.segments} note={`in ward ${ward}`} />
+        <StatTile tone="blue" Icon={Wrench} label="Repairs logged" value={tot.jobs.toLocaleString("en-IN")} note="work orders on these segments" />
+        <StatTile tone="navy" Icon={IndianRupee} label="Billed" value={inr(tot.billed_inr)} note="work order bills, Jun to Oct 2025" />
+        <StatTile tone="failed" Icon={RotateCcw} label="Failed within 30 days" value={tot.reopened.toLocaleString("en-IN")} note={`${pct(tot.reopen_rate)} of repairs`} />
+      </div>
       <Section title={`Road segments in ward ${ward}`} hint="Billed amounts for June to October 2025, highest first. Failed = re-opened within 30 days."
         right={<DataBadge />}>
         <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search road name or id" aria-label="Search roads"
-          className="mb-3 min-h-10 w-full max-w-sm rounded-lg border border-[#D5D6D0] px-3 text-[13.5px] outline-none focus:border-[#1E4FD8]" />
+          className="road-control mb-3 min-h-10 w-full max-w-sm rounded-xl px-3 text-[13.5px] outline-none focus:border-[#1E4FD8]" />
         <div className="overflow-x-auto">
           <table className="w-full min-w-[640px] text-[13px]">
             <thead className="text-left text-[11.5px] uppercase tracking-wide text-[#454952]">
