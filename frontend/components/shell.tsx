@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 export const NAV = [
   { href: "/", label: "Where did the money go?" },
   { href: "/case", label: "Follow one case" },
+  { href: "/roads", label: "Road history" },
   { href: "/audit", label: "What doesn't add up?" },
   { href: "/scorecards", label: "Who is responsible?" },
   { href: "/next-rupee", label: "Where should the next rupee go?" },
