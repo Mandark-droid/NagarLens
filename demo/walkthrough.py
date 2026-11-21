@@ -8,8 +8,8 @@ So the voice cannot drift from the picture, whatever voice is used.
 Narration source, in this order:
   1. Your own voice: put demo/narration/beat1.wav ... beat7.wav (any length) and they are used as they are.
   2. --tts edge (default): Microsoft's neural Indian-English voice through the `edge-tts` package. Free, no account.
-     It SENDS THE NARRATION TEXT to Microsoft's online speech service. Voice: --voice en-IN-NeerjaNeural (female,
-     default) or en-IN-PrabhatNeural (male). Clips are cached in demo/out/tts_cache, so a re-take needs no network
+     It SENDS THE NARRATION TEXT to Microsoft's online speech service. Voice: en-IN-PrabhatNeural (male, default,
+     the lead's choice) or --voice en-IN-NeerjaNeural (female). Clips are cached in demo/out/tts_cache, so a re-take needs no network
      unless a line changed.
   3. --tts elevenlabs: needs ELEVENLABS_API_KEY in the repo-root .env and sends the text to ElevenLabs. Voice:
      ELEVENLABS_VOICE_ID if set, otherwise the first voice on the account labelled Indian. On ElevenLabs' free plan
@@ -23,7 +23,7 @@ Run from the repo root with both servers up (API :8000, web app :3000) and Googl
     .venv/Scripts/python demo/walkthrough.py --fast     # click-path check only, a few seconds, no video
     .venv/Scripts/python demo/walkthrough.py --silent   # video without narration, 2:00 timings
     .venv/Scripts/python demo/walkthrough.py --narration-only   # make the clips + demo/out/narration_preview.wav, no recording
-    .venv/Scripts/python demo/walkthrough.py --voice en-IN-PrabhatNeural --narration-only   # try the male voice
+    .venv/Scripts/python demo/walkthrough.py --voice en-IN-NeerjaNeural --narration-only   # try the female voice
     .venv/Scripts/python demo/walkthrough.py --rate +0%         # natural speed (about 2:20 instead of 2:00)
     .venv/Scripts/python demo/walkthrough.py --list-voices      # Indian voices on your ElevenLabs account
     .venv/Scripts/python demo/walkthrough.py --url http://localhost:3100   # record another copy of the app
@@ -61,10 +61,10 @@ except ImportError:
     pass
 ELEVEN_KEY = (os.environ.get("ELEVENLABS_API_KEY") or "").strip()
 TTS = sys.argv[sys.argv.index("--tts") + 1] if "--tts" in sys.argv else "edge"
-EDGE_VOICE = sys.argv[sys.argv.index("--voice") + 1] if "--voice" in sys.argv else os.environ.get("NARRATION_VOICE", "en-IN-NeerjaNeural")
-# The neural voice reads the 2:00 script in about 2:23 at its natural speed; +15% brings it to just under 2:00.
+EDGE_VOICE = sys.argv[sys.argv.index("--voice") + 1] if "--voice" in sys.argv else os.environ.get("NARRATION_VOICE", "en-IN-PrabhatNeural")
+# The male neural voice reads the 2:00 script in about 2:28 at its natural speed; +20% brings it to just under 2:00.
 # Use --rate +0% if the submission allows a longer video.
-EDGE_RATE = sys.argv[sys.argv.index("--rate") + 1] if "--rate" in sys.argv else os.environ.get("NARRATION_RATE", "+15%")
+EDGE_RATE = sys.argv[sys.argv.index("--rate") + 1] if "--rate" in sys.argv else os.environ.get("NARRATION_RATE", "+20%")
 ELEVEN_API = "https://api.elevenlabs.io"
 ELEVEN_MODEL = os.environ.get("ELEVENLABS_MODEL", "eleven_multilingual_v2")
 QUESTION = "माझी तक्रार BMC25-001690 चं काय झालं?"
@@ -73,17 +73,18 @@ RATE, SAMPLE_WIDTH = 44100, 2    # audio track format: 44.1 kHz, 16-bit, mono
 
 # name, fallback seconds when silent, narration
 NARRATION = [
-    ("hero", 13, "Every monsoon, Mumbai pays to fix the same roads again. Last season it billed thirteen point four three "
-                 "crore rupees for repairs. NagarLens finds three point two two crore that needs a second look, and shows "
-                 "where to spend it next. The data is synthetic."),
-    ("ward_money_flow", 17, "Take Kurla. It billed a hundred and ten percent of its budget. Follow the rupee: most repairs "
-                            "held, but thirty-nine point six lakh was billed on roads still under the original contractor's warranty."),
+    ("hero", 17, "Every monsoon, Mumbai pays to fix the same roads again, and nobody can easily say where the "
+                 "money went or whether the fix lasted. NagarLens follows every rupee, from a citizen's complaint "
+                 "to the repair bill. Of thirteen point four three crore billed last season, three point two two "
+                 "crore needs a second look. The data is synthetic."),
+    ("ward_money_flow", 13, "Take Kurla ward. It billed a hundred and ten percent of its budget. Most repairs held, but "
+                            "thirty-nine point six lakh was billed on roads still under warranty."),
     ("audit_duplicate", 27, "Three exact rules, tuned so normal variation is never flagged. Here is one lead. Two bills on "
                             "LBS Marg: same contractor, same method, same area, three days apart, half a percent different. "
                             "One has three citizen complaints behind it. The other has none. It's a lead, not an accusation, "
                             "so the officer decides: hold for evidence."),
-    ("case", 15, "Every bill traces back to people. Four complaints, one in Marathi, led to this cave-in repair. It was late "
-                 "against a twenty-four hour deadline, failed within thirty days, and sits on a road still under warranty."),
+    ("case", 12, "Every bill traces back to people. Four complaints, one in Marathi, led to this cave-in repair. "
+                 "It was late, failed within thirty days, and sits on a road still under warranty."),
     ("scorecards", 20, "Who is responsible? We compare like with like. Twenty-four hour deadlines are missed by almost "
                        "everyone, so that is a system problem. Durability is where contractors differ: on the same repair "
                        "methods, this one re-opens thirty-eight percent of fixes where its peers manage twenty-three."),
@@ -322,6 +323,17 @@ def main():
             page.wait_for_timeout(50 if FAST else 450)
             locator.click()
 
+        def spot(text: str, ms: int = 2200, nth: int = 0):
+            """Ring the element that shows this text while the narration talks about it. A still screen under a
+            long sentence looks like a frozen video, so every sentence gets a visible cue. Never fails the take."""
+            try:
+                page.get_by_text(text, exact=False).nth(nth).evaluate(
+                    "(el, ms) => { el.style.transition = 'box-shadow .25s'; el.style.borderRadius = '8px'; "
+                    "el.style.boxShadow = '0 0 0 3px #FF9B6A, 0 0 0 10px rgba(255,155,106,.28)'; "
+                    "setTimeout(() => { el.style.boxShadow = ''; }, ms); }", ms, timeout=1500)
+            except Exception:
+                pass
+
         def nav(label: str):
             click(page.get_by_role("link", name=label))
             page.wait_for_load_state("networkidle")
@@ -330,27 +342,56 @@ def main():
         page.get_by_text("Where did Kurla", exact=False).wait_for()
         page.wait_for_timeout(1200)
 
-        # 1. hero
+        # 1. hero: each figure is ringed as it is spoken
         start(1)
         shot(1, "hero")
+        until(0.36)
+        spot("Follow every rupee from a complaint to a fix that held", 3000)
+        until(0.60)
+        spot("₹13.43 Cr")
+        until(0.76)
+        spot("₹3.22 Cr")
+        until(0.91)
+        spot("Synthetic organizer data")
         until(1.0)
 
-        # 2. ward L: money flow and map
+        # 2. ward L: budget tile, then the money flow and map
         start(2)
+        spot("110% of budget", 2600)
+        until(0.33)
         scroll_to("Follow the rupee: what it was spent on")
-        until(0.5)
+        until(0.55)
         shot(2, "ward_money_flow")
+        spot("Follow the rupee: what it was spent on", 1800)
+        until(0.72)
+        spot("Rupees to review, by ward", 1800)
         until(1.0)
 
-        # 3. audit: duplicate bill side by side, then the officer's decision on the last sentence
+        # 3. audit: duplicate bill side by side, each matching fact ringed, then the officer's decision
         start(3)
         nav("What doesn't add up?")
         until(0.12)
         click(page.get_by_role("button", name="Possible duplicate bill", exact=True))
         page.get_by_text("This bill (flagged)").wait_for()
         scroll_to("Only ward L", -20)
+        until(0.24)
+        spot("The matching bill", 1800)
+        spot("This bill (flagged)", 1800)
+        until(0.33)
+        spot("Contractor", 1500, 0)
+        spot("Contractor", 1500, 1)
+        until(0.39)
+        spot("Method", 1500, 0)
+        spot("Method", 1500, 1)
+        until(0.45)
+        spot("3 d", 1800)
+        until(0.52)
+        spot("0.5%", 1800)
         until(0.6)
         shot(3, "audit_duplicate")
+        spot("citizen complaint(s) linked", 2200)
+        until(0.7)
+        spot("No complaint linked", 2200)
         until(0.86)
         click(page.get_by_role("button", name="Hold for evidence", exact=True))
         page.get_by_text("saved", exact=False).first.wait_for()
@@ -361,12 +402,18 @@ def main():
         start(4)
         nav("Follow one case")
         page.get_by_text("1 · Reported", exact=False).first.wait_for()
-        until(0.18)
+        until(0.14)
         shot(4, "case_steps")
         scroll_to("Pick a case", -20)
-        until(0.6)
+        until(0.22)
+        spot("1 · Reported", 1800)
+        until(0.45)
+        spot("3 · Repaired", 1800)
+        until(0.62)
+        spot("5 · Did it hold?", 1800)
+        until(0.78)
         scroll_to("Complaints behind this job")
-        until(0.8)
+        until(0.9)
         shot(4, "case_complaints")
         until(1.0)
 
@@ -374,8 +421,12 @@ def main():
         start(5)
         nav("Who is responsible?")
         page.get_by_text("System problem, not a contractor problem", exact=False).wait_for()
-        until(0.45)
+        until(0.22)
+        spot("System problem, not a contractor problem", 3200)
+        until(0.5)
         scroll_to("Mahalaxmi Civil Contractors", -160)
+        until(0.62)
+        spot("Mahalaxmi Civil Contractors", 3000)
         until(0.8)
         shot(5, "scorecard_mahalaxmi")
         until(1.0)
@@ -384,6 +435,8 @@ def main():
         start(6)
         nav("Where should the next rupee go?")
         page.get_by_text("Recover first", exact=False).first.wait_for()
+        until(0.1)
+        spot("Recover first", 2600)
         until(0.3)
         shot(6, "plan_default")
         scroll_to("Budget and risk weights", -24)
@@ -392,8 +445,11 @@ def main():
         click(budget)
         budget.fill("500000")
         page.get_by_text("16 deferred", exact=False).first.wait_for()
+        until(0.64)
+        spot("16 deferred", 2600)
         until(0.8)
         shot(6, "plan_5_lakh")
+        spot("Sent to warranty", 2600)
         until(1.0)
 
         # 7. ask in Marathi
@@ -404,6 +460,8 @@ def main():
         until(0.25)
         click(page.locator('main button[type="submit"]').first)
         page.get_by_text("WO25-00646", exact=False).first.wait_for()
+        until(0.55)
+        spot("तुमची तक्रार", 2600)
         until(0.7)
         shot(7, "ask_marathi")
         until(1.0)
@@ -429,7 +487,8 @@ def main():
         track = OUT / "narration.wav"
         build_track(clips, [s - lead + 0.25 for s in starts], total - lead, track)
         cmd += ["-i", str(track), "-c:a", "aac", "-b:a", "160k", "-shortest"]
-    cmd += ["-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "20", "-r", "30", "-movflags", "+faststart", str(final)]
+    cmd += ["-c:v", "libx264", "-profile:v", "main", "-level", "4.0", "-pix_fmt", "yuv420p", "-crf", "20", "-r", "30",
+            "-g", "30", "-keyint_min", "30", "-fps_mode", "cfr", "-movflags", "+faststart", str(final)]
     subprocess.run(cmd, check=True)
     print("beat starts (s):", [round(s - lead, 1) for s in starts])
     print(f"video: {final}  ({total - lead:.0f}s)")
