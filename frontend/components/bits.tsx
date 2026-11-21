@@ -16,7 +16,7 @@ export function Kpi({ label, value, sub, tone, icon: Icon }: { label: string; va
       ) : null}
       <div className="min-w-0">
         <div className="text-[12px] font-semibold text-[#3A3F4A]">{label}</div>
-        <div className="whitespace-nowrap text-[24px] font-extrabold leading-tight tracking-tight text-[#16181D] sm:text-[26px]">{value}</div>
+        <div className="break-words text-[24px] font-extrabold leading-tight tracking-tight text-[#16181D] sm:text-[26px]">{value}</div>
         {sub ? <div className="text-[12px] text-[#3A3F4A]">{sub}</div> : null}
       </div>
     </div>

@@ -13,6 +13,20 @@ Built in one day for the challenge *"Follow the Rupee: where did Mumbai's road r
 
 ---
 
+## Demo
+
+- **Demo video:** _link coming shortly_ <!-- DEMO_VIDEO_URL -->
+- **Live app (Hugging Face Space):** _link coming shortly_ <!-- LIVE_APP_URL -->
+- **Run it locally:** see [Quick start](#quick-start).
+
+| | |
+|---|---|
+| ![Where did the money go: stat tiles, money flow from billed to outcome, and a ward map of rupees to review](docs/assets/screens/overview.png)<br>**Where did the money go?** Ward totals, the money flow from work type to outcome, and rupees to review by ward | ![A possible duplicate bill shown side by side with the matching bill](docs/assets/screens/audit-duplicate.png)<br>**What doesn't add up?** A possible duplicate bill next to its match, with the reason, fair context and next action |
+| ![Contractor scorecards compared like for like with peers](docs/assets/screens/scorecards.png)<br>**Who is responsible?** Like-for-like contractor scorecards with rain context | ![The same budget spent three ways: complaints first, severity first and the risk plan](docs/assets/screens/strategy-compare.png)<br>**Where should the next rupee go?** The same ₹5 L spent three ways, including where the risk plan loses |
+| ![One road segment's repairs this monsoon, with warranty status and failures](docs/assets/screens/road-history.png)<br>**Road history:** every repair on one road segment, whether it held, and its warranty status | ![A complaint asked about in Marathi and answered in Marathi](docs/assets/screens/ask-marathi.png)<br>**Ask about my complaint:** asked in Marathi, answered in Marathi from the linked records |
+
+---
+
 ## The problem
 
 Every monsoon, Mumbai pays to fix the same roads again. Citizens complain, repairs get logged and the potholes come back. Nobody can easily answer three questions:
@@ -44,15 +58,16 @@ Our pitch is **"Recover, then reinvest."** About ₹3 Cr went on repairs to road
 
 ## What it does
 
-A Next.js web app on a FastAPI backend, with a ward picker on every page. Six pages, one for each question in the brief:
+A Next.js web app on a FastAPI backend, with a ward picker on every page. Seven pages, one for each question in the brief plus a road-by-road history:
 
 | Page | Route | What you see |
 |---|---|---|
 | **Where did the money go?** | `/` | The headline (₹13.43 Cr billed → ₹3.22 Cr to review), budget vs billed by ward, a budget → billed → outcome money flow, a ward map with flood hotspots, and rainfall vs spend |
 | **Follow one case** | `/case` | One work order end to end: complaints → assignment → repair → bill vs rate card → did it hold? → verdict, with a map, the SLA clock, the road's repair history and a Claude-written verdict |
-| **What doesn't add up?** | `/audit` | Review leads from three rules (paid during warranty, above the rate card, possible duplicate bill), each with its evidence, fair context and next step, plus a reviewer decision saved to SQLite |
-| **Who is responsible?** | `/scorecards` | Contractor and ward report cards compared like for like (same SLA tier and flood exposure, same repair method), with Speed / Durability / Cost chips and a plain-language summary |
-| **Where should the next rupee go?** | `/next-rupee` | Recover first, then a budget- and crew-capped plan: open complaints matched to road segments, risk-ranked with the reasons shown, adjustable weights, a map, and every deferred, warranty-routed or excluded item with its reason |
+| **Road history** | `/roads` | Every road segment in the ward with its repairs, bills and failures; per segment, a timeline of every repair, monthly billed (held vs failed), warranty status and the leads on it |
+| **What doesn't add up?** | `/audit` | Review leads from three rules (paid during warranty, above the rate card, possible duplicate bill), each with its evidence, fair context and next step. Each lead has a recommended verdict, a fair hearing (auditor vs fairness advocate), a ready-to-send evidence-request or warranty-claim letter and a public repair receipt citizens can vote on, plus a reviewer decision saved to SQLite |
+| **Who is responsible?** | `/scorecards` | Contractor and ward report cards compared like for like (same SLA tier and flood exposure, same repair method), with Speed / Durability / Cost chips, rain context (on-time rate on heavy-rain and dry days against peers) and a plain-language summary |
+| **Where should the next rupee go?** | `/next-rupee` | Recover first, then a budget- and crew-capped plan: open complaints matched to road segments, risk-ranked with the reasons shown, adjustable weights, a map, and every deferred, warranty-routed or excluded item with its reason. A strategy comparison spends the same budget three ways (most complaints, highest severity, NagarLens risk plan) and shows the trade-offs, including where the risk plan loses |
 | **Ask about my complaint** | `/ask` | "What happened to my complaint?" answered in the citizen's own language (English, Hindi, Marathi or Hinglish) from the linked records, including open, merged and forwarded complaints |
 
 ### The AI workflow
@@ -135,11 +150,11 @@ Every number in the UI is tagged with its data layer: **Synthetic (organizer)**,
 
 | Member | Builds |
 |---|---|
-| **Kshitij** (lead) | The base (API + web app), merging teammates' PRs, demo video |
-| **Harsh** | Three-way verdict, fair hearing, public repair receipt |
-| **Shariyan** | Rain/flood-adjusted grades, evidence-request letter |
+| **Kshitij** (lead) | The base (API + web app), dashboard design, merging teammates' PRs, demo video |
+| **Harsh** | Recommended verdict, fair hearing, public repair receipt |
+| **Shariyan** | Rain context on scorecards, evidence-request letter |
 | **Aditya** | Strategy comparison: the same budget spent three ways |
-| **Deven** | Road history page |
+| **Deven** | Road history pages (road list, per-road history, ward totals) |
 
 Per-person task files live in [`docs/tasks/`](docs/tasks/); start with [TASKS.md](TASKS.md).
 
