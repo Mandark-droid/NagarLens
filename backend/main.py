@@ -11,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .db import init_db
 from .deps import DATA_LAYER, state
-from .routers import ai, audit, cases, context, letters, overview, plan, roads, scorecards, verdicts, wards
+from .routers import ai, audit, cases, context, letters, overview, plan, roads, scorecards, strategies, verdicts, wards
 
 
 @asynccontextmanager
@@ -29,7 +29,7 @@ app.add_middleware(CORSMiddleware, allow_origin_regex=r"http://(localhost|127\.0
 
 # Order matters: plan and ai declare /wards/{ward}/plan and /wards/{ward}/brief, which must be matched before
 # the catch-all /wards/{ward} in the wards router (ward codes such as F/N contain a slash).
-for r in (context, plan, ai, overview, audit, scorecards, letters, cases, roads, verdicts, wards):
+for r in (context, plan, strategies, ai, overview, audit, scorecards, letters, cases, roads, verdicts, wards):
     app.include_router(r.router, prefix="/api")
 
 

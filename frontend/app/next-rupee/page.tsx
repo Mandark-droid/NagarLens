@@ -5,6 +5,8 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { ArrowDownUp, HardHat, ListChecks, ShieldCheck, Wallet } from "lucide-react";
 import { useState } from "react";
 
+import StrategyCompare from "@/components/strategy-compare";
+
 import { DataBadge, ErrorBox, Kpi, Loading, PageTitle, Pill, Section } from "@/components/bits";
 import { api, qs, wardPath } from "@/lib/api";
 import { inr, inrFull } from "@/lib/format";
@@ -135,6 +137,9 @@ export default function NextRupeePage() {
         <Kpi icon={ArrowDownUp} label="Ranked by risk, not volume" value={`${d.top10_differ_from_complaint_ranking} of top 10`} sub="would rank lower by complaint count alone" />
         <Kpi icon={HardHat} tone="#16298A" label="Crew capacity" value={`${d.crew_jobs} jobs`} sub={`in ${d.plan_days} days`} />
       </div>
+
+      {/* Strategy comparison (Aditya's feature): the same budget and weights, funded in three different orders. */}
+      <StrategyCompare ward={ward} budget={d.budget_inr} weights={mine.weights} />
 
       <Group title="Funded, in priority order" items={d.selected} open note={`${inr(d.total_inr)} estimated`} status="funded" budget={d.budget_inr} />
       {[["Deferred", d.deferred, "over budget or over crew capacity after higher-risk items", "deferred"],
