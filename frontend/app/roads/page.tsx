@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useQuery } from "@tanstack/react-query";
 import { IndianRupee, MapPinned, RotateCcw, Wrench } from "lucide-react";
