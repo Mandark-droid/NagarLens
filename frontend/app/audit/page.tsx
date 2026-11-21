@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
 import { DataBadge, ErrorBox, Kpi, Loading, PageTitle, Pill, Section } from "@/components/bits";
+import { LetterButton } from "@/components/letter-button";
 import VerdictPanel from "@/components/verdict-panel";
 import { api, DECISION_LABEL, qs, RULE_COLOR } from "@/lib/api";
 import { cleanName, inr, inrFull, when } from "@/lib/format";
@@ -143,6 +144,7 @@ function Evidence({ id }: { id: string }) {
         <Cell label="Fair context" value={f.fair_context} plain />
         <Cell label="Next action" value={f.review_action} />
       </div>
+      {["duplicate_bill", "overbilled_vs_rate_card", "dlp_paid_by_bmc"].includes(f.rule_id) ? <LetterButton findingId={f.finding_id} /> : null}
 
       <VerdictPanel findingId={id} />
 
